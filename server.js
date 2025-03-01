@@ -1,42 +1,26 @@
 const express = require("express");
 const os = require("os");
-const packageJson = require("./package.json");
-const dotenv = require("dotenv");
-const prettyMs = require("pretty-ms"); // Converts milliseconds to a readable format
-const osUtils = require("os-utils"); // Provides CPU usage stats
-const expressStatusMonitor = require("express-status-monitor"); // Monitoring UI
+const packageJson = require("./package.json"); // Ensure package.json has "version" and "author"
+require('dotenv').config();
 
-dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Attach express-status-monitor for real-time server monitoring
-app.use(expressStatusMonitor());
 
-// Function to get CPU usage asynchronously
-const getCpuUsage = () => {
-  return new Promise((resolve) => {
-    osUtils.cpuUsage((cpuPercent) => {
-      resolve(cpuPercent * 100); // Convert to percentage
-    });
-  });
-};
 
 // Home route: Displays version, author, hostname, etc.
-app.get("/", async (req, res) => {
-  const cpuUsage = await getCpuUsage(); // Get CPU usage asynchronously
-
+app.get("/", (req, res) => {
   res.json({
     status: "ok",
     author: packageJson.author || "Unknown",
     githubUrl: packageJson.githubUrl,
-    version: packageJson.version || "1.0.0",
+    version: packageJson.version ,
     hostname: os.hostname(),
     platform: os.platform(),
-    uptime: prettyMs(os.uptime() * 1000), // Convert uptime to a readable format
-    cpuUsage: `${cpuUsage.toFixed(2)}%`,
+    uptime: os.uptime()/1000, // Human-readable uptime
   });
 });
+
 
 // Hardware info route
 app.get("/hw", (req, res) => {
