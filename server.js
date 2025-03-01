@@ -6,18 +6,31 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+const formatUptime = (seconds) => {
+  const days = Math.floor(seconds / 86400);
+  seconds %= 86400;
+  const hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  const minutes = Math.floor(seconds / 60);
+  seconds = Math.floor(seconds % 60);
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
+
 // Home route: Displays version, author, hostname, etc.
 app.get("/", (req, res) => {
   res.json({
     status: "ok",
     author: packageJson.author || "Unknown",
     githubUrl: packageJson.githubUrl,
-    version: packageJson.version || "1.0.0",
+    version: packageJson.version,
     hostname: os.hostname(),
     platform: os.platform(),
-    uptime: os.uptime(),
+    uptime: formatUptime(os.uptime()), // Human-readable uptime
   });
 });
+
 
 // Hardware info route
 app.get("/hw", (req, res) => {
