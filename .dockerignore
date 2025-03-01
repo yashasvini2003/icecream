@@ -23,3 +23,6 @@ eslint.config.mjs
 
 # Ignore Jest configuration and cache files
 jest*
+
+# ignore docker compose files
+docker-compose*
